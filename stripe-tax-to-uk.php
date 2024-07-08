@@ -53,41 +53,33 @@ function createCsv($entries)
 
         $country = $entry['country_code'];
 
-        if ($country === 'GR') {
-            $country = 'EL';
+        if ($country !== 'GB') {
+            continue;
         }
 
-        if ($entry['filing_currency'] !== 'eur') {
+        if ($entry['filing_currency'] !== 'gbp') {
             continue;
         }
 
         if (!isset($countries[$country])) {
             $countries[$country] = [
-                'Umsatzsteuersatz' => $entry['tax_rate'] * 100,
-                'Nettobetrag' => 0,
-                'Umsatzsteuerbetrag' => 0,
+                'Sales' => 0,
+                'Tax' => 0,
             ];
         }
 
-        $countries[$country]['Nettobetrag'] += floatval($entry['filing_total_taxable_sales']);
-        $countries[$country]['Umsatzsteuerbetrag'] += floatval($entry['filing_total_tax_collected']);
+        $countries[$country]['Sales'] += floatval($entry['filing_total_sales']);
+        $countries[$country]['Tax'] += floatval($entry['filing_tax_payable']);
 
     }
 
-    fwrite(STDOUT, "#v1.0\n");
-
     foreach ($countries as $country => $data) {
 
-        if ($country === 'DE' || $data['Umsatzsteuerbetrag'] == 0) {
-            continue;
-        }
-
-        fwrite(STDOUT, '1,' . $country . "\n");
-        fwrite(STDOUT, sprintf("2,%s,STANDARD,%s,%s,%s\n",
-            $country,
-            number_format($data['Umsatzsteuersatz'], 2, '.', ''),
-            number_format($data['Nettobetrag'], 2, '.', ''),
-            number_format($data['Umsatzsteuerbetrag'], 2, '.', ''))
+        fwrite(STDOUT, sprintf("%s,0,%s,0,%s,%s,0,0,0\n",
+            number_format($data['Tax'], 0, '.', ''),
+            number_format($data['Tax'], 0, '.', ''),
+            number_format($data['Tax'], 0, '.', ''),
+            number_format($data['Sales'], 0, '.', ''))
         );
 
     }
