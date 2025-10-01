@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL ^ E_DEPRECATED);
 define("NAME", basename(array_shift($argv)));
 
 if (count($argv)) {
@@ -73,8 +73,8 @@ function createCsv($entries)
             ];
         }
 
-        $countries[$key ]['Nettobetrag'] += floatval($entry['filing_total_taxable_sales']);
-        $countries[$key ]['Umsatzsteuerbetrag'] += floatval($entry['filing_total_tax_collected']);
+        $countries[$key ]['Nettobetrag'] += floatval($entry['filing_tax_payable'] / $entry['tax_rate']);
+        $countries[$key ]['Umsatzsteuerbetrag'] += floatval($entry['filing_tax_payable']);
 
     }
 

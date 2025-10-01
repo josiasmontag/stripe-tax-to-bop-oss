@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL ^ E_DEPRECATED);
 define("NAME", basename(array_shift($argv)));
 
 if (count($argv)) {
